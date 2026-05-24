@@ -1,6 +1,6 @@
 import json
-from utils import load_trie
-
+from wordfreq import word_frequency
+from utils import build_trie
 _cache: dict[int, bool] = {}
 
 def can_win(node: dict) -> bool:
@@ -26,17 +26,14 @@ def build(node: dict, cpu_turn: bool) -> dict:
     }
 
 
-def main():
-    trie = load_trie("data/trie.json")
+def generate(words_path, output_path, cpu_first, threshold):
+    with open(words_path) as f:
+        all_words = [line.strip() for line in f if line.strip()]
 
-    for cpu_first in (True, False):
-        label = "cpu" if cpu_first else "human"
-        print(f"Building best-moves trie ({label} first)...")
-        result = build(trie, cpu_first)
-        path = f"data/best_moves_{label}_first.json"
-        with open(path, "w") as f:
-            json.dump(result, f, indent=2)
+    cpu_words = [w for w in all_words if word_frequency(w.lower(), "en") >= threshold]
+    trie = build_trie(cpu_words)
 
-
-if __name__ == "__main__":
-    main()
+    result = build(trie, cpu_first)
+    with open(output_path, "w") as f:
+        json.dump(result, f, indent=2)
+    print(f"Wrote {output_path}")
