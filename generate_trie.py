@@ -25,4 +25,4 @@ def build_trie(input_path, output_path):
 
 
 if __name__ == "__main__":
-    build_trie("all_words.txt", "trie.json")
+    build_trie("data/all_words.txt", "data/trie.json")
