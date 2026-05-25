@@ -18,12 +18,16 @@ wheels = [
 name = "ghost"
 version = "0.1.0"
 source = { virtual = "." }
-dependencies = [
+
+[package.dev-dependencies]
+generate = [
     { name = "wordfreq" },
 ]
 
 [package.metadata]
-requires-dist = [{ name = "wordfreq", specifier = ">=3.1.1" }]
+
+[package.metadata.requires-dev]
+generate = [{ name = "wordfreq", specifier = ">=3.1.1" }]
 
 [[package]]
 name = "langcodes"

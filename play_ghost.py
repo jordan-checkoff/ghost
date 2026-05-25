@@ -1,6 +1,6 @@
 import argparse
+import json
 import random
-from utils import load_trie
 
 def is_valid_word(word: str, node_at_fragment: dict, fragment: str) -> bool:
     node = node_at_fragment
@@ -13,10 +13,12 @@ def is_valid_word(word: str, node_at_fragment: dict, fragment: str) -> bool:
 
 def play(level):
     human_first = random.choice([True, False])
-    label = "human" if human_first else "cpu"
 
-    valid_node = load_trie("data/valid_words_trie.json")
-    strategy_node = load_trie(f"data/cpu_strategy_{label}_first_{level}.json")
+    label = "cpu" if not human_first else "human"
+    with open("data/valid_words_trie.json") as f:
+        valid_node = json.load(f)
+    with open(f"data/cpu_strategy_{label}_first_{level}.json") as f:
+        strategy_node = json.load(f)
 
     print("=== GHOST ===")
     print("Take turns adding a letter to the fragment.")
@@ -42,12 +44,7 @@ def play(level):
             fragment += letter
 
             if letter not in valid_node:
-                print(f"CPU challenges! Enter a valid word starting with '{fragment}': ", end="")
-                word = input().strip().upper()
-                while not word.startswith(fragment):
-                    print(f"Enter a word starting with '{fragment}': ", end="")
-                    word = input().strip().upper()
-                print(f"[{word}] is not a valid word. You lose!\n")
+                print(f"CPU challenges! '{fragment}' is not a valid word prefix. You lose!\n")
                 break
 
             valid_node = valid_node[letter]
@@ -87,8 +84,12 @@ def play(level):
         print()
 
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--level", choices=["easy", "medium", "hard", "legendary"], default="medium")
     args = parser.parse_args()
     play(args.level)
+
+
+if __name__ == "__main__":
+    main()
